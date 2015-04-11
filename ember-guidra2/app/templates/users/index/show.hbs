@@ -1,0 +1,7 @@
+<strong>{{firstName}} {{lastName}}</strong>
+<hr>
+{{bio}}
+
+{{#each t in tables}}
+  {{#link-to 'users.index.show.book' this.id t.id}}Table: {{t.id}}{{/link-to}}
+{{/each}}
