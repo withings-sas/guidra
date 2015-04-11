@@ -15,41 +15,42 @@ App.Adapter = {
   }
 }
 
+
+/**
+ * Router
+ */
 App.Router.map(function() {
-  //this.route('keyspaces');
   this.resource('keyspaces', function() {
-    this.resource('keyspace', { path: ':name' }, function() {
-      this.route('tables');
+    this.route('keyspace', { path: ':name' }, function() {
+      this.route('details', { path: ':name' });
     });
   });
 });
 
+
+/**
+ * Models
+ */
+App.Keyspace = Ember.Object.extend({
+  id: '',
+  name: ''
+});
+
+App.Table = Ember.Object.extend({
+  id: '',
+  name: ''
+});
+
+
+/**
+ * Routes
+ */
 App.IndexRoute = Ember.Route.extend({
   beforeModel: function() {
     this.transitionTo('keyspaces');
   }
 });
 
-App.Keyspace = Ember.Object.extend({
-  id: '',
-  name: '',
-  tables: []
-});
-
-
-App.Keyspace.reopenClass({
-  extractTables: function(songsData, keyspace) {
-    return songsData.map(function(table) {
-      return App.Table.create({ id: table.id, name: table.name, keyspace: keyspace });
-    });
-  }
-});
-
-App.Table = Ember.Object.extend({
-  id: '',
-  name: '',
-  keyspace: null
-});
 
 App.KeyspacesRoute = Ember.Route.extend({
   model: function() {
@@ -63,27 +64,38 @@ App.KeyspacesRoute = Ember.Route.extend({
     $(document).attr('title', 'All Keyspaces');
   },
 
-  actions: {
-    createKeyspace: function() {
-    }
-  }
-});
-
-App.KeyspaceRoute = Ember.Route.extend({
-  model: function(params) {
-    return App.Adapter.ajax('/keyspace/' + params.name).then(function(data) {
-      return App.Keyspace.createRecord(data);
-    });
+  renderTemplate: function() {
+    this.render({ outlet: 'keyspaces' });
   }
 });
 
 
-
-App.KeyspaceTablesRoute = Ember.Route.extend({
+App.KeyspacesKeyspaceRoute = Ember.Route.extend({
   model: function(params) {
-    ks = this.modelFor('keyspace');
+    /*ks = this.modelFor('keyspace');
     console.log(ks.tables);
-    return ks.tables; //ks.get('tables');
+    return ks.tables; //ks.get('tables');*/
+    return App.Adapter.ajax('/tables/system').then(function(data) {
+      return data; //.map(App.Table.createRecord, App.Table);
+    });
   },
+
+  renderTemplate: function() {
+    this.render({ outlet: 'tables' });
+  }
+});
+
+
+App.KeyspacesKeyspaceDetailsRoute = Ember.Route.extend({
+  model: function(params) {
+    console.log('heyy');
+    return App.Adapter.ajax('/tables/system/' + params.name).then(function(data) {
+      return data;
+    });
+  },
+
+  renderTemplate: function() {
+    this.render({ outlet: 'details' });
+  }
 });
 
