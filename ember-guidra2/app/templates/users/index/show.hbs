@@ -1,7 +1,6 @@
-<strong>{{firstName}} {{lastName}}</strong>
+<strong></strong>
 <hr>
-{{bio}}
 
-{{#each t in tables}}
-  {{#link-to 'users.index.show.book' this.id t.id}}Table: {{t.id}}{{/link-to}}
+{{#each model}}
+  {{#link-to 'users.index.show.book' this.id}}{{name}}{{/link-to}}
 {{/each}}
