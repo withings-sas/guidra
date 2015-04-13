@@ -1,7 +1,7 @@
 import DS from "ember-data";
 
 // define the User model
-var Book = DS.Model.extend({
+var Table = DS.Model.extend({
   name:  DS.attr('string'),
   keyspaceName:  DS.attr('string'),
   columnfamilyName:  DS.attr('string'),
@@ -35,11 +35,11 @@ var Book = DS.Model.extend({
   valueAlias:  DS.attr('string')
 });
 
-Book.reopenClass({
+Table.reopenClass({
   FIXTURES: [
     {id: 1, keyspaceName: 'Steve', name: 'Jobs'},
     {id: 2, keyspaceName: 'Jony', name: 'Ive'}
   ]
 });
 
-export default Book;
+export default Table;

@@ -1,5 +1,5 @@
 <ul class="nav nav-sidebar">
 {{#each t in model.tables}}
-  <li>{{#link-to 'keyspaces.index.show.book' t.id class="list-group-item keyspace-link"}}{{t.name}}{{/link-to}}</li>
+  <li>{{#link-to 'keyspaces.index.show.table' t.id class="list-group-item keyspace-link"}}{{t.name}}{{/link-to}}</li>
 {{/each}}
 </ul>

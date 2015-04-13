@@ -6,7 +6,7 @@ var Keyspace = DS.Model.extend({
   durableWrites:   DS.attr('string'),
   strategyClass:   DS.attr('string'),
   strategyOptions: DS.attr('string'),
-  tables:     DS.hasMany('book', {async: true})
+  tables:     DS.hasMany('table', {async: true})
 });
 
 Keyspace.reopenClass({
