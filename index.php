@@ -109,41 +109,16 @@ $app->get('/columns/:keyspace_table_column', function ($keyspace_table_column) {
 	echo json_encode(array("column" => $column));
 });
 
-/*
-$app->get('/tables/:keyspace_id', function ($keyspace_id) {
-	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."'";
-	$rowst = query('system', $qt);
-	$idt = 0;
-	$tables = [];
-	foreach( $rowst as $rowt ) {
-		$tab = ["id" => $keyspace.$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowt;
-		$tables[] = $tab;
+$app->get('/results', function () {
+	$table = $_GET["table"];
+	$q = "SELECT * FROM ".$table." LIMIT 5";
+	$rows = query('system', $q);
+	$results = [];
+	foreach( $rows as $row ) {
+		$results[] = $row;
 	}
-	echo json_encode(array("tables" => $tables, "table" => $tables[0]));
+	echo json_encode(["results" => $results]);
 });
-$app->get('/tables/:keyspace', function ($keyspace) {
-	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."'";
-	$rowst = query('system', $qt);
-	$idt = 0;
-	$tables = [];
-	foreach( $rowst as $rowt ) {
-		$table = ["id" => $idt++, "name" => $rowt["columnfamily_name"]] + $rowt;
-		$tables[] = $table;
-	}
-	echo json_encode($tables);
-});
-$app->get('/tables/:keyspace/:table', function ($keyspace, $table) {
-	$qt = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
-	$rowst = query('system', $qt);
-	$idt = 0;
-	$tables = [];
-	foreach( $rowst as $rowt ) {
-		$table = ["id" => $idt++, "name" => $rowt["columnfamily_name"]] + $rowt;
-		$tables[] = $table;
-	}
-	echo json_encode($tables);
-});
-*/
 
 $app->get('/:name', function ($name) {
     echo $name;
