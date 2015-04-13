@@ -73,21 +73,40 @@ $app->get('/keyspaces', function () {
 });
 
 $app->get('/tables/:keyspace_table', function ($keyspace_table) {
-	list($keyspace, $table) = explode(":", $keyspace_table);
-	//$qt = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
-	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
+	list($keyspace, $table_name) = explode(":", $keyspace_table);
+	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."'";
 	$rowst = query('system', $qt);
-	$idt = 0;
-	$tables = [];
-	foreach( $rowst as $rowt ) {
-		$rowtCC = [];
-		foreach( $rowt as $k=>$v ) {
-			$rowtCC[lcfirst(preg_replace('/(?:^|_)(.?)/e',"strtoupper('$1')",$k))] = $v;
-		}
-		$table = ["id" => $keyspace.":".$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowtCC;
-		//$tables[] = $table;
+	$rowt = $rowst[0];
+	$rowtCC = [];
+	foreach( $rowt as $k=>$v ) {
+		$v = str_replace("org.apache.cassandra.db.", "", $v);
+		$rowtCC[lcfirst(preg_replace('/(?:^|_)(.?)/e',"strtoupper('$1')",$k))] = $v;
 	}
+
+	$table = ["id" => $keyspace.":".$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowtCC;
+
+	$q = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."'";
+	$rows = query('system', $q);
+	$table["columns"] = [];
+	foreach( $rows as $k=>$v ) {
+		$table["columns"][] = $keyspace_table.":".$v["column_name"];
+	}
+
 	echo json_encode(array("table" => $table));
+});
+
+$app->get('/columns/:keyspace_table_column', function ($keyspace_table_column) {
+	list($keyspace, $table_name, $column_name) = explode(":", $keyspace_table_column);
+	$q = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."' AND column_name = '".$column_name."'";
+	$rows = query('system', $q);
+	$row = $rows[0];
+	$rowCC = [];
+	foreach( $row as $k=>$v ) {
+		$v = str_replace("org.apache.cassandra.db.", "", $v);
+		$rowCC[lcfirst(preg_replace('/(?:^|_)(.?)/e',"strtoupper('$1')",$k))] = $v;
+	}
+	$column = ["id" => $keyspace_table_column] + $rowCC;
+	echo json_encode(array("column" => $column));
 });
 
 /*
