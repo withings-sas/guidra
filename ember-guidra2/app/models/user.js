@@ -5,8 +5,8 @@ var User = DS.Model.extend({
   name:  DS.attr('string'),
   durableWrites:   DS.attr('string'),
   strategyClass:   DS.attr('string'),
-  strategyOptions: DS.attr('string')
-  //tables:     DS.hasMany('book', {async: true})
+  strategyOptions: DS.attr('string'),
+  tables:     DS.hasMany('book', {async: true})
 });
 
 User.reopenClass({

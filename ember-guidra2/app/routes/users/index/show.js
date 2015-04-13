@@ -12,7 +12,8 @@ export default Ember.Route.extend({
     // using `fetch` instead of the usual `find` method
     // to always make a call to the API
     // regardless of the current store
-    return this.store.find('book'); //fetch('book', params.id);
+    //return this.store.find('book', {keyspace_id: params.id}); //fetch('book', params.id);
+    return this.store.getById('user', params.id); //fetch('book', params.id);
   },
 
 });

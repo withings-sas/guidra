@@ -1,6 +1,8 @@
 <strong></strong>
 <hr>
 
-{{#each model}}
-  {{#link-to 'users.index.show.book' this.id}}{{name}}{{/link-to}}
+<ul>
+{{#each t in model.tables}}
+  <li>{{#link-to 'users.index.show.book' t.id}}{{t.name}}{{/link-to}}</li>
 {{/each}}
+</ul>

@@ -5,13 +5,6 @@ var Book = DS.Model.extend({
   name:  DS.attr('string'),
   keyspaceName:  DS.attr('string'),
   columnfamilyName:  DS.attr('string'),
-/*  columnName:  DS.attr('string'),
-  componentIndex:  DS.attr('string'),
-  indexName:  DS.attr('string'),
-  indexOptions:  DS.attr('string'),
-  indexType:  DS.attr('string'),
-  validator:  DS.attr('string')
-*/
   bloomFilterFpChance:  DS.attr('string'),
   type:  DS.attr('string'),
   caching:  DS.attr('string'),
