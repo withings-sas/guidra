@@ -32,7 +32,8 @@ var Table = DS.Model.extend({
   readRepairChance:  DS.attr('string'),
   speculativeRetry:  DS.attr('string'),
   subcomparator:  DS.attr('string'),
-  valueAlias:  DS.attr('string')
+  valueAlias:  DS.attr('string'),
+  columns:  DS.hasMany('column', {async: true})
 });
 
 Table.reopenClass({

@@ -1,6 +1,7 @@
 <div class="table-responsive">
 	<h2 class="sub-header">{{name}}</h2>
 
+	<h3 class="sub-header">Properties</h3>
 	<table class="table table-striped">
 	<tr><th>Name</th><th>Value</th></tr>
 	<tr><td>compactionStrategyClass</td><td>{{compactionStrategyClass}}</td></tr>
@@ -10,5 +11,21 @@
 	<tr><td>compactionStrategyOptions</td><td>{{compactionStrategyOptions}}</td></tr>
 	<tr><td>bloomFilterFpChance</td><td>{{bloomFilterFpChance}}</td></tr>
 	<tr><td>type</td><td>{{type}}</td></tr>
+	</table>
+
+	<h3 class="sub-header">Columns</h3>
+	<table class="table table-striped">
+	<tr><th>Name</th><th>type</th><th>Cmp</th><th>Idx</th><th>IdxOpts</th><th>idxType</th><th>validator</th></tr>
+	{{#each t in model.columns}}
+		<tr>
+			<th>{{t.columnName}}</th>
+			<td>{{t.componentIndex}}</td>
+			<td>{{t.indexName}}</td>
+			<td>{{t.indexOptions}}</td>
+			<td>{{t.indexType}}</td>
+			<td>{{t.type}}</td>
+			<td>{{t.validator}}</td>
+		</tr>
+	{{/each}}
 	</table>
 </div>
