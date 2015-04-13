@@ -6,7 +6,7 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
-  this.route('users', function() {
+  this.route('keyspaces', function() {
     this.route('index', { path: ''}, function() {
       this.route('show', { path: ':id' }, function() {
         this.route('book', { path: ':id' });
