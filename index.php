@@ -72,7 +72,7 @@ $app->get('/keyspaces', function () {
 	echo json_encode(["keyspaces" => $keyspaces]);
 });
 
-$app->get('/books/:keyspace_table', function ($keyspace_table) {
+$app->get('/tables/:keyspace_table', function ($keyspace_table) {
 	list($keyspace, $table) = explode(":", $keyspace_table);
 	//$qt = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
 	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
@@ -87,11 +87,11 @@ $app->get('/books/:keyspace_table', function ($keyspace_table) {
 		$table = ["id" => $keyspace.":".$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowtCC;
 		//$tables[] = $table;
 	}
-	echo json_encode(array("book" => $table));
+	echo json_encode(array("table" => $table));
 });
 
 /*
-$app->get('/books/:keyspace_id', function ($keyspace_id) {
+$app->get('/tables/:keyspace_id', function ($keyspace_id) {
 	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."'";
 	$rowst = query('system', $qt);
 	$idt = 0;
@@ -100,7 +100,7 @@ $app->get('/books/:keyspace_id', function ($keyspace_id) {
 		$tab = ["id" => $keyspace.$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowt;
 		$tables[] = $tab;
 	}
-	echo json_encode(array("books" => $tables, "book" => $tables[0]));
+	echo json_encode(array("tables" => $tables, "table" => $tables[0]));
 });
 $app->get('/tables/:keyspace', function ($keyspace) {
 	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."'";
