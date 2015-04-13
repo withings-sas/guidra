@@ -6,6 +6,7 @@ require 'php-cassandra/php-cassandra.php';
 $app = new \Slim\Slim();
 
 header("Access-Control-Allow-Origin: *");
+header("Content-Type: text/json");
 
 function query($ks, $q) {
 	$nodes = ['127.0.0.1'];
@@ -29,7 +30,7 @@ $app->get('/users(/:ks)', function ($ks=0) {
 	$keyspaces = [];
 	$id = 0;
 	foreach( $rows as $row ) {
-		$keyspace = ["id" => $row["keyspace_name"], "name" => $row["keyspace_name"], "durable_writes" => $row["durable_writes"], "strategy_class" => $row["strategy_class"], "strategy_options" => $row["strategy_options"], "tables" => []];
+		$keyspace = ["id" => $id, "name" => $row["keyspace_name"], "durable_writes" => $row["durable_writes"], "strategy_class" => $row["strategy_class"], "strategy_options" => $row["strategy_options"], "tables" => []];
 		$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$row["keyspace_name"]."'";
 		$rowst = query('system', $qt);
 		$idt = 0;
@@ -64,7 +65,7 @@ $app->get('/keyspaces', function () {
 		$idt = 0;
 		foreach( $rowst as $rowt ) {
 			$table = ["id" => $idt++, "name" => $rowt["columnfamily_name"]] + $rowt;
-			$keyspace["tables"][] = $table;
+			$keyspace["tables"][] = $row["keyspace_name"].":".$table;
 		}
 		*/
 		$keyspaces[] = $keyspace;
@@ -74,17 +75,45 @@ $app->get('/keyspaces', function () {
 
 $app->get('/books/:keyspace_table', function ($keyspace_table) {
 	list($keyspace, $table) = explode(":", $keyspace_table);
-	$qt = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
+	//$qt = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
+	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table."'";
 	$rowst = query('system', $qt);
 	$idt = 0;
 	$tables = [];
 	foreach( $rowst as $rowt ) {
-		$table = ["id" => $idt++, "name" => $rowt["columnfamily_name"]] + $rowt;
-		$tables[] = $table;
+		$rowtCC = [];
+		foreach( $rowt as $k=>$v ) {
+			$rowtCC[lcfirst(preg_replace('/(?:^|_)(.?)/e',"strtoupper('$1')",$k))] = $v;
+		}
+		$table = ["id" => $keyspace.":".$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowtCC;
+		//$tables[] = $table;
 	}
-	echo json_encode(array("books" => $tables));
+	echo json_encode(array("book" => $table));
 });
-
+$app->get('/books/:keyspace_id', function ($keyspace_id) {
+	//$keyspace = $_GET["keyspace_id"] == 0 ? 'system' : 'system_traces';
+	/*
+		$qt = "SELECT * FROM schema_columnfamilies";
+		$rowst = query('system', $qt);
+		$idt = 0;
+		foreach( $rowst as $rowt ) {
+			if( $idt++ == $keyspace_id ) {
+				$keyspace = $rowt["keyspace_name"];
+				break;
+			}
+		}
+				//$keyspace = "system";
+	*/
+	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."'";
+	$rowst = query('system', $qt);
+	$idt = 0;
+	$tables = [];
+	foreach( $rowst as $rowt ) {
+		$tab = ["id" => $keyspace.$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowt;
+		$tables[] = $tab;
+	}
+	echo json_encode(array("books" => $tables, "book" => $tables[0]));
+});
 $app->get('/tables/:keyspace', function ($keyspace) {
 	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."'";
 	$rowst = query('system', $qt);
