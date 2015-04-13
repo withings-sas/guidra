@@ -59,7 +59,7 @@ $app->get('/keyspaces', function () {
 	$keyspaces = [];
 	$id = 0;
 	foreach( $rows as $row ) {
-		$keyspace = ["id" => $id++, "name" => $row["keyspace_name"], "durable_writes" => $row["durable_writes"], "strategy_class" => $row["strategy_class"], "strategy_options" => $row["strategy_options"], "tables" => []];
+		$keyspace = ["id" => $row["keyspace_name"], "name" => $row["keyspace_name"], "durable_writes" => $row["durable_writes"], "strategy_class" => $row["strategy_class"], "strategy_options" => $row["strategy_options"], "tables" => []];
 		$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$row["keyspace_name"]."'";
 		$rowst = query('system', $qt);
 		$idt = 0;
