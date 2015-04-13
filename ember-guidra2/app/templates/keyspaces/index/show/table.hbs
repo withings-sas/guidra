@@ -3,19 +3,26 @@
 
 	<h3 class="sub-header">Properties</h3>
 	<table class="table table-striped">
-	<tr><th>Name</th><th>Value</th></tr>
-	<tr><td>compactionStrategyClass</td><td>{{compactionStrategyClass}}</td></tr>
-	<tr><td>gcGraceSeconds</td><td>{{gcGraceSeconds}}</td></tr>
-	<tr><td>readRepairChance</td><td>{{readRepairChance}}</td></tr>
-	<tr><td>defaultTimeToLive</td><td>{{defaultTimeToLive}}</td></tr>
-	<tr><td>compactionStrategyOptions</td><td>{{compactionStrategyOptions}}</td></tr>
-	<tr><td>bloomFilterFpChance</td><td>{{bloomFilterFpChance}}</td></tr>
-	<tr><td>type</td><td>{{type}}</td></tr>
+	<thead>
+		<tr><th>Name</th><th>Value</th></tr>
+	</thead>
+	<tbody>
+		<tr><td>compactionStrategyClass</td><td>{{compactionStrategyClass}}</td></tr>
+		<tr><td>gcGraceSeconds</td><td>{{gcGraceSeconds}}</td></tr>
+		<tr><td>readRepairChance</td><td>{{readRepairChance}}</td></tr>
+		<tr><td>defaultTimeToLive</td><td>{{defaultTimeToLive}}</td></tr>
+		<tr><td>compactionStrategyOptions</td><td>{{compactionStrategyOptions}}</td></tr>
+		<tr><td>bloomFilterFpChance</td><td>{{bloomFilterFpChance}}</td></tr>
+		<tr><td>type</td><td>{{type}}</td></tr>
+	</tbody>
 	</table>
 
 	<h3 class="sub-header">Columns</h3>
 	<table class="table table-striped">
-	<tr><th>Name</th><th>type</th><th>Cmp</th><th>Idx</th><th>IdxOpts</th><th>idxType</th><th>validator</th></tr>
+	<thead>
+		<tr><th>Name</th><th>type</th><th>Cmp</th><th>Idx</th><th>IdxOpts</th><th>idxType</th><th>validator</th></tr>
+	</thead>
+	<tbody>
 	{{#each t in model.columns}}
 		<tr>
 			<th>{{t.columnName}}</th>
@@ -27,5 +34,6 @@
 			<td>{{t.validator}}</td>
 		</tr>
 	{{/each}}
+	</tbody>
 	</table>
 </div>
