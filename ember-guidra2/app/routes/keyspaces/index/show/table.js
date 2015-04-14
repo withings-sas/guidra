@@ -1,7 +1,6 @@
 import Ember from 'ember';
 
 export default Ember.Route.extend({
-
   renderTemplate: function() {
     this.render({
       outlet: 'tables',
@@ -15,5 +14,8 @@ export default Ember.Route.extend({
     return this.store.getById('table', params.id);
   },
 
+  setupController: function(controller, table) {
+    controller.set('model', table);
+  }
 });
 

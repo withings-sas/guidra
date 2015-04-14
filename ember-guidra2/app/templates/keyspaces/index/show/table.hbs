@@ -1,6 +1,29 @@
 <div class="table-responsive">
 	<h2 class="sub-header">{{name}}</h2>
 
+    Limit: {{input type='text' value=limit}}
+	<button {{action 'test'}}>Show extract</button>
+	<table class="table table-striped">
+	<thead>
+		<tr>
+			{{#each t in model.columns}}
+				<th>{{t.columnName}}</th>
+			{{/each}}
+		</tr>
+	</thead>
+	<tbody>
+	{{#if extract}}
+		{{#each row in extract.rows}}
+		<tr>
+			{{#each col in row.cols}}
+				<th>{{col}}</th>
+			{{/each}}
+		</tr>
+		{{/each}}
+	{{/if}}
+	</tbody>
+	</table>
+
 	<h3 class="sub-header">Properties</h3>
 	<table class="table table-striped">
 	<thead>
