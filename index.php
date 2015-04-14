@@ -58,18 +58,44 @@ $app->get('/keyspaces', function () {
 	$rows = query('system', $q);
 	$keyspaces = [];
 	$id = 0;
+$table_keys = [];
 	foreach( $rows as $row ) {
 		$keyspace = ["id" => $row["keyspace_name"], "name" => $row["keyspace_name"], "durable_writes" => $row["durable_writes"], "strategy_class" => $row["strategy_class"], "strategy_options" => $row["strategy_options"], "tables" => []];
 		$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$row["keyspace_name"]."'";
 		$rowst = query('system', $qt);
 		$idt = 0;
 		foreach( $rowst as $rowt ) {
-			//$table = ["id" => $idt++, "name" => $rowt["columnfamily_name"]] + $rowt;
+			$table_keys[] = $row["keyspace_name"].":".$rowt["columnfamily_name"];
 			$keyspace["tables"][] = $row["keyspace_name"].":".$rowt["columnfamily_name"];
 		}
 		$keyspaces[] = $keyspace;
 	}
-	echo json_encode(["keyspaces" => $keyspaces]);
+
+
+	$tables = [];
+	foreach( $table_keys as $keyspace_table ) {
+	list($keyspace, $table_name) = explode(":", $keyspace_table);
+	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."'";
+	$rowst = query('system', $qt);
+	$rowt = $rowst[0];
+	$rowtCC = [];
+	foreach( $rowt as $k=>$v ) {
+		$v = str_replace("org.apache.cassandra.db.", "", $v);
+		$rowtCC[lcfirst(preg_replace('/(?:^|_)(.?)/e',"strtoupper('$1')",$k))] = $v;
+	}
+
+	$table = ["id" => $keyspace.":".$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowtCC;
+
+	$q = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."'";
+	$rows = query('system', $q);
+	$table["columns"] = [];
+	foreach( $rows as $k=>$v ) {
+		$table["columns"][] = $keyspace_table.":".$v["column_name"];
+	}
+	$tables[] = $table;
+	}
+
+	echo json_encode(["keyspaces" => $keyspaces, "tables" => $tables]);
 });
 
 $app->get('/tables/:keyspace_table', function ($keyspace_table) {
@@ -111,13 +137,22 @@ $app->get('/columns/:keyspace_table_column', function ($keyspace_table_column) {
 
 $app->get('/results', function () {
 	$table = $_GET["table"];
-	$q = "SELECT * FROM ".$table." LIMIT 5";
+	$limit = $_GET["limit"];
+	$q = "SELECT * FROM ".$table." LIMIT ".$limit;
 	$rows = query('system', $q);
 	$results = [];
 	foreach( $rows as $row ) {
-		$results[] = $row;
+		$line["cols"] = [];
+		foreach( $row as $k => $v ) {
+			$line["cols"][] = $v;
+		}
+		$results[] = $line;
 	}
-	echo json_encode(["results" => $results]);
+	echo json_encode(["rows" => $results]);
+});
+
+$app->get('/query', function () {
+	echo json_encode(["a" => "b"]);
 });
 
 $app->get('/:name', function ($name) {
