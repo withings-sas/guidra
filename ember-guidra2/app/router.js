@@ -10,6 +10,7 @@ Router.map(function() {
     this.route('index', { path: ''}, function() {
       this.route('show', { path: ':keyspaceid' }, function() {
         this.route('table', { path: ':id' });
+        this.route('new', { path: 'new' });
       });
     });
   });

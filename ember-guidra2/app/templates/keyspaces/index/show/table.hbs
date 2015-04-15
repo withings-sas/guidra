@@ -1,62 +1,72 @@
-<div class="table-responsive">
-	<h2 class="sub-header">{{name}}</h2>
+<h2 class="sub-header">{{name}}</h2>
 
-    Limit: {{input type='text' value=limit}}
-	<button {{action 'test'}}>Show extract</button>
+<p>{{input type='text' value=cql_query}}
+<button {{action 'test'}}>Query</button></p>
+{{#if extract}}
+	<div class="table-responsive">
 	<table class="table table-striped">
 	<thead>
 		<tr>
-			{{#each t in model.columns}}
-				<th>{{t.columnName}}</th>
+			{{#each col_name in extract.columns}}
+				<th>{{col_name}}</th>
 			{{/each}}
 		</tr>
 	</thead>
 	<tbody>
-	{{#if extract}}
-		{{#each row in extract.rows}}
-		<tr>
-			{{#each col in row.cols}}
-				<th>{{col}}</th>
-			{{/each}}
-		</tr>
+	{{#each row in extract.rows}}
+	<tr>
+		{{#each col in row.cols}}
+			<th>{{col}}</th>
 		{{/each}}
-	{{/if}}
-	</tbody>
-	</table>
-
-	<h3 class="sub-header">Properties</h3>
-	<table class="table table-striped">
-	<thead>
-		<tr><th>Name</th><th>Value</th></tr>
-	</thead>
-	<tbody>
-		<tr><td>compactionStrategyClass</td><td>{{compactionStrategyClass}}</td></tr>
-		<tr><td>gcGraceSeconds</td><td>{{gcGraceSeconds}}</td></tr>
-		<tr><td>readRepairChance</td><td>{{readRepairChance}}</td></tr>
-		<tr><td>defaultTimeToLive</td><td>{{defaultTimeToLive}}</td></tr>
-		<tr><td>compactionStrategyOptions</td><td>{{compactionStrategyOptions}}</td></tr>
-		<tr><td>bloomFilterFpChance</td><td>{{bloomFilterFpChance}}</td></tr>
-		<tr><td>type</td><td>{{type}}</td></tr>
-	</tbody>
-	</table>
-
-	<h3 class="sub-header">Columns</h3>
-	<table class="table table-striped">
-	<thead>
-		<tr><th>Name</th><th>type</th><th>Cmp</th><th>Idx</th><th>IdxOpts</th><th>idxType</th><th>validator</th></tr>
-	</thead>
-	<tbody>
-	{{#each t in model.columns}}
-		<tr>
-			<th>{{t.columnName}}</th>
-			<td>{{t.componentIndex}}</td>
-			<td>{{t.indexName}}</td>
-			<td>{{t.indexOptions}}</td>
-			<td>{{t.indexType}}</td>
-			<td>{{t.type}}</td>
-			<td>{{t.validator}}</td>
-		</tr>
+	</tr>
 	{{/each}}
 	</tbody>
 	</table>
+	</div>
+{{else}}
+	{{#if cql_query_loading}}
+		<p>Loading...</p>
+	{{else}}
+		<p>No result</p>
+	{{/if}}
+{{/if}}
+
+<h3 class="sub-header">Properties</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+<thead>
+	<tr><th>Name</th><th>Value</th></tr>
+</thead>
+<tbody>
+	<tr><td>compactionStrategyClass</td><td>{{compactionStrategyClass}}</td></tr>
+	<tr><td>gcGraceSeconds</td><td>{{gcGraceSeconds}}</td></tr>
+	<tr><td>readRepairChance</td><td>{{readRepairChance}}</td></tr>
+	<tr><td>defaultTimeToLive</td><td>{{defaultTimeToLive}}</td></tr>
+	<tr><td>compactionStrategyOptions</td><td>{{compactionStrategyOptions}}</td></tr>
+	<tr><td>bloomFilterFpChance</td><td>{{bloomFilterFpChance}}</td></tr>
+	<tr><td>type</td><td>{{type}}</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3 class="sub-header">Columns</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+<thead>
+	<tr><th>Name</th><th>type</th><th>Cmp</th><th>Idx</th><th>IdxOpts</th><th>idxType</th><th>validator</th></tr>
+</thead>
+<tbody>
+{{#each t in model.columns}}
+	<tr>
+		<th>{{t.columnName}}</th>
+		<td>{{t.componentIndex}}</td>
+		<td>{{t.indexName}}</td>
+		<td>{{t.indexOptions}}</td>
+		<td>{{t.indexType}}</td>
+		<td>{{t.type}}</td>
+		<td>{{t.validator}}</td>
+	</tr>
+{{/each}}
+</tbody>
+</table>
 </div>
