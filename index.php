@@ -19,7 +19,11 @@ function query($ks, $q) {
 
 	$args = [];
 	$response = $connection->querySync($q, $args);
-	$rows = $response->fetchAll();
+	if( substr($q, 0, 6) == "INSERT" ) {
+		$rows = $response;
+	} else {
+		$rows = $response->fetchAll();
+	}
 	return $rows;
 }
 
@@ -143,16 +147,36 @@ $app->get('/results', function () {
 	$results = [];
 	foreach( $rows as $row ) {
 		$line["cols"] = [];
+		$columns = [];
 		foreach( $row as $k => $v ) {
 			$line["cols"][] = $v;
+			$columns[] = $k;
 		}
 		$results[] = $line;
 	}
-	echo json_encode(["rows" => $results]);
+	echo json_encode(["rows" => $results, "columns" => $columns]);
 });
 
 $app->get('/query', function () {
-	echo json_encode(["a" => "b"]);
+	$q = $_GET["q"];
+	$rows = query('system', $q);
+	if( substr($q, 0, 6) == "INSERT" ) {
+		$ret = ["rows" => [["cols" => ["success"]]], "columns" => ["status"]];
+	} else {
+		$results = [];
+		$columns = [];
+		foreach( $rows as $row ) {
+			$line["cols"] = [];
+			$columns = [];
+			foreach( $row as $k => $v ) {
+				$line["cols"][] = $v;
+				$columns[] = $k;
+			}
+			$results[] = $line;
+		}
+		$ret = ["rows" => $results, "columns" => $columns];
+	}
+	echo json_encode($ret);
 });
 
 $app->get('/:name', function ($name) {
