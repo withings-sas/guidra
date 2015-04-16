@@ -6,7 +6,11 @@ require 'php-cassandra/php-cassandra.php';
 $app = new \Slim\Slim();
 
 header("Access-Control-Allow-Origin: *");
-header("Content-Type: text/json");
+header("Access-Control-Allow-Methods: *");
+//header("Access-Control-Allow-Headers: *");
+header('Access-Control-Allow-Headers: X-Requested-With');
+header('Access-Control-Allow-Headers: Content-Type');
+//header("Content-Type: text/json");
 
 function query($ks, $q) {
 	$nodes = ['127.0.0.1'];
@@ -100,6 +104,30 @@ $table_keys = [];
 	}
 
 	echo json_encode(["keyspaces" => $keyspaces, "tables" => $tables]);
+});
+
+$app->post('/columns', function () use ($app) {
+	$app->contentType('application/json');
+	$postdata = file_get_contents("php://input");
+	$payload = json_decode($postdata, true);
+	echo json_encode(["column" => ["id" => "new-column", "columnName" => $payload["column"]["columnName"]]]);
+});
+
+$app->options('/columns', function () use ($app) {
+	$app->contentType('application/json');
+	echo json_encode([]);
+});
+
+$app->post('/tables', function () use ($app) {
+	$app->contentType('application/json');
+	$postdata = file_get_contents("php://input");
+	$payload = json_decode($postdata, true);
+	echo json_encode(["table" => ["id" => "new-table", "name" => $payload["table"]["name"]]]);
+});
+
+$app->options('/tables', function () use ($app) {
+	$app->contentType('application/json');
+	echo json_encode([]);
 });
 
 $app->get('/tables/:keyspace_table', function ($keyspace_table) {
