@@ -1,1 +1,10 @@
 <h2 class="sub-header">Create new table</h2>
+
+<p>Name: {{input type='text' value=table_name}}</p>
+
+<p>Columns</p>
+<p>Name: {{input type='text' value=col_name}} Type: {{input type='text' value=col_type}}</p>
+
+<p>Primary Key: {{input type='text' value=table_pkey}}</p>
+
+<p><button {{action 'save'}}>Save</button></p>
