@@ -11,8 +11,8 @@ export default Ember.ObjectController.extend({
 	test: function() {
 		this.set('extract', false);
 		var that = this;
-		//var keyspace = that.get('keyspaceName');
-		//var table = that.get('name');
+		var keyspace_name = that.get('keyspaceName');
+		var table_name = that.get('name');
 		var query = that.get('cql_query');
 		if( query ) {
 			that.set('cql_query_loading', true);
@@ -22,7 +22,7 @@ export default Ember.ObjectController.extend({
 				that.set('extract', json);
 			});*/
 			//var query = "SELECT * FROM " + keyspace + "." + table + " WHERE " + where + " LIMIT " + limit;
-			Ember.$.getJSON('http://yuki.lunasys.fr/query?q='+query, function(json) {
+			Ember.$.getJSON('http://yuki.lunasys.fr/query/' + keyspace_name + "/" + table_name + '?q='+query, function(json) {
 				that.set('cql_query_loading', false);
 				if( json.rows && json.rows.length > 0 ) {
 					that.set('extract', json);

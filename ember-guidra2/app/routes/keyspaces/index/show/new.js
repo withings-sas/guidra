@@ -22,7 +22,7 @@ export default Ember.Route.extend({
 	  //console.log(cols);
 	  for( var i in cols ) {
 		var col = cols[i];
-		if( col.type == "" ) {
+		if( col.type === "" || typeof col.type === "undefined" ) {
 		  break;
 		}
 	    console.log("**** col:[" + col.name + "] ****");

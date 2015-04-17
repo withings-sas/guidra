@@ -26,10 +26,20 @@ export default Ember.Route.extend({
 		that.set('extract', false);
 		that.set('cql_query', query);
 		that.set('cql_query_loading', true);
-		Ember.$.getJSON('http://yuki.lunasys.fr/query?q='+query, function(json) {
+		Ember.$.getJSON('http://yuki.lunasys.fr/query/' + keyspace_name + "/" + table_name + '?q='+query, function(json) {
 			that.set('cql_query_loading', false);
 			if( json.rows && json.rows.length > 0 ) {
 				that.set('extract', json);
+				/*var columns_names = [];
+				json.columns.forEach(function(column_name) {
+					columns_names.push(keyspace_name+":"+table_name+":"+column_name);
+				});
+				json.columns_record = [];
+				that.store.find('column', {'ids': columns_names}).then(function(columns) {
+					console.log(columns);
+					json.columns_record = columns;
+					that.set('extract', json);
+				});*/
 			}
 		});
   }

@@ -1,14 +1,14 @@
 <h2 class="sub-header">{{name}}</h2>
 
-<p>{{input type='text' value=cql_query}}
+<p>{{input type='text' value=cql_query class="cql-query"}}
 <button {{action 'test'}}>Query</button></p>
 {{#if extract}}
 	<div class="table-responsive">
 	<table class="table table-striped">
 	<thead>
 		<tr>
-			{{#each col_name in extract.columns}}
-				<th>{{col_name}}</th>
+			{{#each col in extract.columns}}
+				<th {{bind-attr class="col.type"}}>{{col.columnName}}</th>
 			{{/each}}
 		</tr>
 	</thead>
@@ -63,7 +63,7 @@
 		<td>{{t.indexName}}</td>
 		<td>{{t.indexOptions}}</td>
 		<td>{{t.indexType}}</td>
-		<td>{{t.type}}</td>
+		<td {{bind-attr class="t.type"}}>{{t.type}}</td>
 		<td>{{t.validator}}</td>
 	</tr>
 {{/each}}
