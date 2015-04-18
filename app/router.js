@@ -6,6 +6,7 @@ var Router = Ember.Router.extend({
 });
 
 Router.map(function() {
+  this.route('root', { path: ''});
   this.route('keyspaces', function() {
     this.route('index', { path: ''}, function() {
       this.route('show', { path: ':keyspaceid' }, function() {
