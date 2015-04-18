@@ -6,6 +6,7 @@ export default DS.FixtureAdapter.extend({
 });
 */
 export default DS.RESTAdapter.extend({
+  //host: "http://" + window.location.hostname
   host: config.APP.wsURL
   //host: "http://yuki.lunasys.fr"
 });

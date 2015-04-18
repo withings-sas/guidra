@@ -1,7 +1,12 @@
 # Cassandra Explorer
 
-This aims to provide an easy way to access the content and
+This tool aims to provide an easy way to access the content and
 properties of Cassandra tables
+
+## Quick Start
+
+* Frontend: Download a release, extract it, and locate a apache vhost on it.
+* Backend: Edit the line "$nodes = ['127.0.0.1'];" in backend/index.php and replace the IP by one of your Cassandra node.
 
 ## Prerequisites
 

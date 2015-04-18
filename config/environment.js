@@ -16,7 +16,6 @@ module.exports = function(environment) {
     APP: {
       // Here you can pass flags/options to your application instance
       // when it is created
-      wsURL: 'http://yuki.lunasys.fr/backend'
     }
   };
 
@@ -26,6 +25,7 @@ module.exports = function(environment) {
     // ENV.APP.LOG_TRANSITIONS = true;
     // ENV.APP.LOG_TRANSITIONS_INTERNAL = true;
     ENV.APP.LOG_VIEW_LOOKUPS = true;
+    ENV.APP.wsURL = 'http://yuki.lunasys.fr/backend';
   }
 
   if (environment === 'test') {
@@ -38,10 +38,14 @@ module.exports = function(environment) {
     ENV.APP.LOG_VIEW_LOOKUPS = false;
 
     ENV.APP.rootElement = '#ember-testing';
+    ENV.APP.wsURL = "http://test.host";
   }
 
   if (environment === 'production') {
-
+    /*var http = location.protocol;
+    var slashes = http.concat("//");
+    var host = slashes.concat(window.location.hostname);*/
+    ENV.APP.wsURL = "/backend";
   }
 
   return ENV;
