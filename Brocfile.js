@@ -1,6 +1,7 @@
 /* global require, module */
 
 var EmberApp = require('ember-cli/lib/broccoli/ember-app');
+var Funnel = require('broccoli-funnel');
 
 var app = new EmberApp();
 
@@ -19,4 +20,10 @@ var app = new EmberApp();
 app.import('bower_components/bootstrap/dist/js/bootstrap.js');
 app.import('bower_components/bootstrap/dist/css/bootstrap.css');
 
-module.exports = app.toTree();
+var backendFiles = new Funnel('backend', {
+  srcDir: '/',
+  include: ['**/*'],
+  destDir: '/backend'
+});
+
+module.exports = app.toTree(backendFiles);
