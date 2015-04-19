@@ -22,12 +22,12 @@ function query($ks, $q) {
 
 	$args = [];
 	$response = $connection->querySync($q, $args);
-	if( substr($q, 0, 6) == "INSERT" ) {
-		$rows = $response;
-	} else {
-		$rows = $response->fetchAll();
-		$rows = json_decode(json_encode($rows), true);
-	}
+	return $response;
+}
+function queryFetch($ks, $q) {
+	$response = query($ks, $q);
+	$rows = $response->fetchAll();
+	$rows = json_decode(json_encode($rows), true);
 	return $rows;
 }
 
@@ -37,14 +37,14 @@ function query($ks, $q) {
  */
 $app->get('/keyspaces', function () {
 	$q = "SELECT * FROM schema_keyspaces";
-	$rows = query('system', $q);
+	$rows = queryFetch('system', $q);
 	$keyspaces = [];
 	$id = 0;
 $table_keys = [];
 	foreach( $rows as $row ) {
 		$keyspace = ["id" => $row["keyspace_name"], "name" => $row["keyspace_name"], "durable_writes" => $row["durable_writes"], "strategy_class" => $row["strategy_class"], "strategy_options" => $row["strategy_options"], "tables" => []];
 		$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$row["keyspace_name"]."'";
-		$rowst = query('system', $qt);
+		$rowst = queryFetch('system', $qt);
 		$idt = 0;
 		foreach( $rowst as $rowt ) {
 			$table_keys[] = $row["keyspace_name"].":".$rowt["columnfamily_name"];
@@ -58,7 +58,7 @@ $table_keys = [];
 	foreach( $table_keys as $keyspace_table ) {
 		list($keyspace, $table_name) = explode(":", $keyspace_table);
 		$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."'";
-		$rowst = query('system', $qt);
+		$rowst = queryFetch('system', $qt);
 		$rowt = $rowst[0];
 		$rowtCC = [];
 		foreach( $rowt as $k=>$v ) {
@@ -96,7 +96,7 @@ $app->options('/tables', function () {
 $app->get('/tables/:keyspace_table', function ($keyspace_table) {
 	list($keyspace, $table_name) = explode(":", $keyspace_table);
 	$qt = "SELECT * FROM schema_columnfamilies WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."'";
-	$rowst = query('system', $qt);
+	$rowst = queryFetch('system', $qt);
 	$rowt = $rowst[0];
 	$rowtCC = [];
 	foreach( $rowt as $k=>$v ) {
@@ -125,7 +125,7 @@ function camelCase($in) {
 function getColumns($keyspace_table) {
 	list($keyspace, $table_name) = explode(":", $keyspace_table);
 	$q = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."'";
-	$rows = query('system', $q);
+	$rows = queryFetch('system', $q);
 	$columns = [];
 	foreach( $rows as $row ) {
 		$rowCC = [];
@@ -151,7 +151,7 @@ function getColumns($keyspace_table) {
 function getColumn($keyspace_table_column) {
 	list($keyspace, $table_name, $column_name) = explode(":", $keyspace_table_column);
 	$q = "SELECT * FROM schema_columns WHERE keyspace_name = '".$keyspace."' AND columnfamily_name = '".$table_name."' AND column_name = '".$column_name."'";
-	$rows = query('system', $q);
+	$rows = queryFetch('system', $q);
 	$row = $rows[0];
 	$rowCC = [];
 	foreach( $row as $k=>$v ) {
@@ -185,7 +185,7 @@ $app->get('/results', function () {
 	$table = $_GET["table"];
 	$limit = $_GET["limit"];
 	$q = "SELECT * FROM ".$table." LIMIT ".$limit;
-	$rows = query('system', $q);
+	$rows = queryFetch('system', $q);
 	$results = [];
 	foreach( $rows as $row ) {
 		$line["cols"] = [];
@@ -200,28 +200,46 @@ $app->get('/results', function () {
 });
 
 $app->get('/query(/:keyspace/:table)', function ($keyspace="", $table="") {
-	$q = $_GET["q"];
-	$rows = query('system', $q);
-	if( substr($q, 0, 6) == "INSERT" ) {
-		$ret = ["rows" => [["cols" => ["success"]]], "columns" => ["status"]];
-	} else {
-		$results = [];
-		$columns = [];
-		foreach( $rows as $row ) {
-			$line["cols"] = [];
-			$columns = [];
-			foreach( $row as $k => $v ) {
-				$line["cols"][] = $v;
-				if( $keyspace != "" && $table != "" ) {
-					$keyspace_table_column = $keyspace.":".$table.":".$k;
-					$columns[] = getColumn($keyspace_table_column);
-				} else {
-					$columns[] = $k;
-				}
+	try {
+		$q = trim($_GET["q"]);
+
+		$is_select = preg_match("#^SELECT\s+[a-zA-Z0-9\*_-]+\s+FROM\s+([a-zA-Z0-9\._-]+)\s+#i", $q, $matches);
+		if( $is_select ) {
+			$keyspace_table = $matches[1];
+			if( !strstr($keyspace_table, ".") ) {
+				throw new Exception("Invalid keyspace/table:[".$keyspace_table."]");
 			}
-			$results[] = $line;
+			list($keyspace, $table) = explode(".", $keyspace_table);
+			if( $keyspace == "" || $table == "" ) {
+				throw new Exception("Invalid keyspace:[".$keyspace."] or table:[".$table."]");
+			}
 		}
-		$ret = ["rows" => $results, "columns" => $columns];
+
+		if( $is_select ) {
+			$rows = queryFetch('system', $q);
+			$results = [];
+			$columns = [];
+			foreach( $rows as $row ) {
+				$line["cols"] = [];
+				$columns = [];
+				foreach( $row as $k => $v ) {
+					$line["cols"][] = $v;
+					if( $keyspace != "" && $table != "" ) {
+						$keyspace_table_column = $keyspace.":".$table.":".$k;
+						$columns[] = getColumn($keyspace_table_column);
+					} else {
+						$columns[] = $k;
+					}
+				}
+				$results[] = $line;
+			}
+			$ret = ["status" => 0, "rows" => $results, "columns" => $columns, "keyspace" => $keyspace, "table" => $table, "message" => "OK [".count($rows)."] rows"];
+		} else {
+			query('system', $q);
+			$ret = ["status" => 0, "rows" => [["cols" => ["success"]]], "columns" => ["status"], "message" => "OK"];
+		}
+	} catch( Exception $e ) {
+		$ret = ["status" => 1, "message" => $e->getMessage()];
 	}
 	echo json_encode($ret);
 });

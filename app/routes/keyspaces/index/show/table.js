@@ -27,7 +27,7 @@ export default Ember.Route.extend({
 		that.set('extract', false);
 		that.set('cql_query', query);
 		that.set('cql_query_loading', true);
-		Ember.$.getJSON(config.APP.wsURL + '/query/' + keyspace_name + "/" + table_name + '?q='+query, function(json) {
+		Ember.$.getJSON(config.APP.wsURL + '/query?q='+query, function(json) {
 			that.set('cql_query_loading', false);
 			if( json.rows && json.rows.length > 0 ) {
 				that.set('extract', json);
