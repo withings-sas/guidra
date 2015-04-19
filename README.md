@@ -5,7 +5,7 @@ properties of Cassandra tables
 
 ## Quick Start
 
-* Frontend: Download a release, extract it, and locate a apache vhost on it.
+* Frontend: Download a release, extract it, and configure an apache vhost pointing to the folder "dist/".
 * Backend: Edit the line "$nodes = ['127.0.0.1'];" in backend/index.php and replace the IP by one of your Cassandra node.
 
 ## Prerequisites
@@ -23,7 +23,7 @@ To work on this project, you will need the following things properly installed o
 * `git clone <repository-url>` this repository
 * change into the new directory
 * `npm install`
-* `bower install`
+* `./node_modules/bower/bin/bower install`
 
 ## Running / Development
 
@@ -37,7 +37,7 @@ To work on this project, you will need the following things properly installed o
 
 ### Deploying
 
-Locate a vhost to the "dist/" folder.
+Configure a vhost to the "dist/" folder.
 
 ## Further Reading / Useful Links
 
