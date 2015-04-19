@@ -98,3 +98,30 @@ body {
 .cql-query {
 	width:80%;
 }
+
+
+
+@media (max-width: 767px) {
+  .navbar-form .form-control {
+    width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  .navbar-form .form-control {
+    width: 205px;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .navbar-form .form-control {
+    width: 425px;
+  }
+}
+
+@media (min-width: 1200px) {
+  .navbar-form .form-control {
+    width: 625px;
+  }
+}
+

@@ -63,7 +63,7 @@ $table_keys = [];
 		$rowtCC = [];
 		foreach( $rowt as $k=>$v ) {
 			$v = str_replace("org.apache.cassandra.db.", "", $v);
-			$rowtCC[lcfirst(preg_replace('/(?:^|_)(.?)/e',"strtoupper('$1')",$k))] = $v;
+			$rowtCC[camelCase($k)] = $v;
 		}
 
 		$table = ["id" => $keyspace.":".$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowtCC;
@@ -101,7 +101,7 @@ $app->get('/tables/:keyspace_table', function ($keyspace_table) {
 	$rowtCC = [];
 	foreach( $rowt as $k=>$v ) {
 		$v = str_replace("org.apache.cassandra.db.", "", $v);
-		$rowtCC[lcfirst(preg_replace('/(?:^|_)(.?)/e',"strtoupper('$1')",$k))] = $v;
+		$rowtCC[camelCase($k)] = $v;
 	}
 
 	$table = ["id" => $keyspace.":".$rowt["columnfamily_name"], "name" => $rowt["columnfamily_name"]] + $rowtCC;
@@ -203,7 +203,7 @@ $app->get('/query(/:keyspace/:table)', function ($keyspace="", $table="") {
 	try {
 		$q = trim($_GET["q"]);
 
-		$is_select = preg_match("#^SELECT\s+[a-zA-Z0-9\*_-]+\s+FROM\s+([a-zA-Z0-9\._-]+)\s+#i", $q, $matches);
+		$is_select = preg_match("#^SELECT\s+[a-zA-Z0-9\*_-]+\s+FROM\s+([a-zA-Z0-9\._-]+)#i", $q, $matches);
 		if( $is_select ) {
 			$keyspace_table = $matches[1];
 			if( !strstr($keyspace_table, ".") ) {
@@ -218,20 +218,20 @@ $app->get('/query(/:keyspace/:table)', function ($keyspace="", $table="") {
 		if( $is_select ) {
 			$rows = queryFetch('system', $q);
 			$results = [];
-			$columns = [];
+			$columns_names = [];
 			foreach( $rows as $row ) {
 				$line["cols"] = [];
 				$columns = [];
 				foreach( $row as $k => $v ) {
 					$line["cols"][] = $v;
-					if( $keyspace != "" && $table != "" ) {
-						$keyspace_table_column = $keyspace.":".$table.":".$k;
-						$columns[] = getColumn($keyspace_table_column);
-					} else {
-						$columns[] = $k;
-					}
+					$keyspace_table_column = $keyspace.":".$table.":".$k;
+					$columns_names[$keyspace_table_column] = $keyspace_table_column;
 				}
 				$results[] = $line;
+			}
+			$columns = [];
+			foreach( $columns_names as $keyspace_table_column ) {
+				$columns[] = getColumn($keyspace_table_column);
 			}
 			$ret = ["status" => 0, "rows" => $results, "columns" => $columns, "keyspace" => $keyspace, "table" => $table, "message" => "OK [".count($rows)."] rows"];
 		} else {

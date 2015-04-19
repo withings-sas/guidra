@@ -16,7 +16,6 @@ export default Ember.Route.extend({
   },
 
   setupController: function(controller, table) {
-	  console.log(window);
 		controller.set('model', table);
 
 		var that = controller;

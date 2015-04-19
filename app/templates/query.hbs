@@ -1,0 +1,33 @@
+<div class="col-sm-3 col-md-2 sidebar">
+	{{outlet 'sidebar'}}
+</div>
+<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+	{{#if extract}}
+		<div class="table-responsive">
+		<table class="table table-striped">
+		<thead>
+			<tr>
+				{{#each col in extract.columns}}
+					<th {{bind-attr class="col.type"}}>{{col.columnName}}</th>
+				{{/each}}
+			</tr>
+		</thead>
+		<tbody>
+		{{#each row in extract.rows}}
+		<tr>
+			{{#each col in row.cols}}
+				<th>{{col}}</th>
+			{{/each}}
+		</tr>
+		{{/each}}
+		</tbody>
+		</table>
+		</div>
+	{{else}}
+		{{#if cql_query_loading}}
+			<p>Loading...</p>
+		{{else}}
+			<p>No result</p>
+		{{/if}}
+	{{/if}}
+</div>

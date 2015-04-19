@@ -14,8 +14,13 @@
 		<li><a href="/keyspaces">Keyspaces</a></li>
 		<!--<li><a href="#">Settings</a></li>-->
 	  </ul>
-	  <form class="navbar-form navbar-right">
-		<input type="text" class="form-control" placeholder="Query...">
+	  <form class="navbar-form navbar-right" action="/query">
+        <div class="input-group">
+        <input style="width:400px;" type="text" class="form-control" name="q" autocomplete="off" autofocus="autofocus" placeholder="Query...">
+        <span class="input-group-btn">
+          <button class="btn btn-default" type="submit">Go!</button>
+        </span>
+        </div>
 	  </form>
 	</div>
   </div>
