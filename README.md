@@ -1,7 +1,8 @@
 # Cassandra Explorer
 
-This tool aims to provide an easy way to access the content and
-properties of Cassandra tables
+This tool provides an easy way to access the content and properties of Cassandra tables.
+
+The (long term) goal is to build a phpmyadmin for cassandra, with no java required, only CQL queries.
 
 ## Quick Start
 
