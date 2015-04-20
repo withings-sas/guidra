@@ -1,10 +1,17 @@
 <h2 class="sub-header">{{name}}</h2>
 
-<p>{{input type='text' value=cql_query class="cql-query"}}
-<button {{action 'test'}}>Query</button></p>
+<form class="inline-form" action="/query">
+	<div class="input-group">
+		{{input type='text' name="q" value=cql_query class="form-control"}}
+		<span class="input-group-btn">
+			<button {{action "execute"}} class="btn btn-default">Execute</button>
+		</span>
+	</div>
+</form>
+
 {{#if extract}}
 	<div class="table-responsive">
-	<table class="table table-striped">
+	<table class="table table-striped query-results">
 	<thead>
 		<tr>
 			{{#each col in extract.columns}}
@@ -16,7 +23,7 @@
 	{{#each row in extract.rows}}
 	<tr>
 		{{#each col in row.cols}}
-			<th>{{col}}</th>
+			<td>{{col}}</td>
 		{{/each}}
 	</tr>
 	{{/each}}
@@ -31,23 +38,6 @@
 	{{/if}}
 {{/if}}
 
-<h3 class="sub-header">Properties</h3>
-<div class="table-responsive">
-<table class="table table-striped">
-<thead>
-	<tr><th>Name</th><th>Value</th></tr>
-</thead>
-<tbody>
-	<tr><td>compactionStrategyClass</td><td>{{compactionStrategyClass}}</td></tr>
-	<tr><td>gcGraceSeconds</td><td>{{gcGraceSeconds}}</td></tr>
-	<tr><td>readRepairChance</td><td>{{readRepairChance}}</td></tr>
-	<tr><td>defaultTimeToLive</td><td>{{defaultTimeToLive}}</td></tr>
-	<tr><td>compactionStrategyOptions</td><td>{{compactionStrategyOptions}}</td></tr>
-	<tr><td>bloomFilterFpChance</td><td>{{bloomFilterFpChance}}</td></tr>
-	<tr><td>type</td><td>{{type}}</td></tr>
-</tbody>
-</table>
-</div>
 
 <h3 class="sub-header">Columns</h3>
 <div class="table-responsive">
@@ -67,6 +57,21 @@
 		<td>{{t.validator}}</td>
 	</tr>
 {{/each}}
+</tbody>
+</table>
+</div>
+
+
+<h3 class="sub-header">Properties</h3>
+<div class="table-responsive">
+<table class="table table-striped">
+<thead>
+	<tr><th>Name</th><th>Value</th></tr>
+</thead>
+<tbody>
+    {{#each attr in attributes}}
+		<tr><td>{{attr.key}}</td><td>{{attr.value}}</td></tr>
+	{{/each}}
 </tbody>
 </table>
 </div>

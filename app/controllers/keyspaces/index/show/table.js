@@ -1,29 +1,24 @@
 import Ember from 'ember';
-import config from '../../../../config/environment';
 
 export default Ember.ObjectController.extend({
-  //cql_where: "",
-  //cql_limit: 50,
   cql_query: "",
   cql_query_loading: false,
   extract: false,
 
+  attributes: function() {
+    var tab = this.get('content');
+    var attributes = Ember.get(tab, 'data');
+    var array = Ember.$.map(attributes, function(value, index) {
+      if( index !== "columns" ) {
+        return [{"key": index, "value": value}];
+      }
+    });
+    return array;
+  }.property(),
+
   actions: {
-	test: function() {
-		this.set('extract', false);
-		var that = this;
-		//var keyspace_name = that.get('keyspaceName');
-		//var table_name = that.get('name');
-		var query = that.get('cql_query');
-		if( query ) {
-			that.set('cql_query_loading', true);
-			Ember.$.getJSON(config.APP.wsURL + '/query?q='+query, function(json) {
-				that.set('cql_query_loading', false);
-				if( json.rows && json.rows.length > 0 ) {
-					that.set('extract', json);
-				}
-			});
-		}
+	execute: function() {
+      this.transitionTo('query', {'queryParams': {'q': this.cql_query}});
 	}
   }
 });

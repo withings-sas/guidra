@@ -1,10 +1,9 @@
-<div class="col-sm-3 col-md-2 sidebar">
-	{{outlet 'sidebar'}}
-</div>
-<div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+<div class="col-sm-12 col-md-12 main">
+	{{textarea name=q value=q rows="3" autofocus="autofocus" class="query-field"}}
+	<button {{action 'execute'}}>Execute</button>
 	{{#if extract}}
 		<div class="table-responsive">
-		<table class="table table-striped">
+		<table class="table table-striped query-results">
 		<thead>
 			<tr>
 				{{#each col in extract.columns}}
@@ -16,7 +15,7 @@
 		{{#each row in extract.rows}}
 		<tr>
 			{{#each col in row.cols}}
-				<th>{{col}}</th>
+				<td>{{col}}</td>
 			{{/each}}
 		</tr>
 		{{/each}}

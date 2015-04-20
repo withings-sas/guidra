@@ -125,3 +125,10 @@ body {
   }
 }
 
+.query-field {
+	width:100%;
+}
+
+.query-results {
+	font-size:0.8em;
+}
