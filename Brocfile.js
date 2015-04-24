@@ -24,6 +24,9 @@ app.import('bower_components/bootstrap/dist/fonts/glyphicons-halflings-regular.w
   destDir: 'fonts'
 });
 
+app.import('.htaccess');
+app.import('backend/.htaccess');
+
 var backendFiles = new Funnel('backend', {
   srcDir: '/',
   include: ['**/*'],

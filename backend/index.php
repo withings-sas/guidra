@@ -1,4 +1,11 @@
 <?php
+$config_filename = "config.local.php";
+if( file_exists($config_filename) ) {
+	$config = require $config_filename;
+} else {
+	$config = require "config.default.php";
+}
+
 require 'Slim/Slim.php';
 require 'php-cassandra/php-cassandra.php';
 \Slim\Slim::registerAutoloader();
@@ -12,7 +19,8 @@ header('Access-Control-Allow-Headers: X-Requested-With');
 header('Access-Control-Allow-Headers: Content-Type');
 
 function query($ks, $q) {
-	$nodes = ['127.0.0.1'];
+	global $config;
+	$nodes = $config["cassandra"]["nodes"];
 
 	$connection = new Cassandra\Connection($nodes, $ks);
 	$connection->connect();
