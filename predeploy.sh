@@ -17,7 +17,7 @@ rsync -az --exclude=".git/" --exclude="dist/" --exclude="bower_components/" --ex
 BUILD_LOG="dist/guidra_"$ENVIRONMENT"_build.log"
 
 # Build
-ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; mkdir dist"
+ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; mkdir -p dist"
 ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; npm install >$BUILD_LOG 2>&1"
 ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; ./node_modules/bower/bin/bower install >>$BUILD_LOG 2>&1"
 ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; ./node_modules/ember-cli/bin/ember build --environment production >>$BUILD_LOG 2>&1"
