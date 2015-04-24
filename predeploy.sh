@@ -14,10 +14,12 @@ COMMIT=$2
 #rsync -az --delete --exclude=".git/" --exclude="dist/" --exclude="bower_components/" --exclude="node_modules/" ./ $BUILD_USER@$BUILD_SERVER:$BUILD_PATH/
 rsync -az --exclude=".git/" --exclude="dist/" --exclude="bower_components/" --exclude="node_modules/" ./ $BUILD_USER@$BUILD_SERVER:$BUILD_PATH/
 
+BUILD_LOG="dist/guidra_"$ENVIRONMENT"_build.log"
+
 # Build
-ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; npm install"
-ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; ./node_modules/bower/bin/bower install"
-ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; ./node_modules/ember-cli/bin/ember build --environment production"
+ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; npm install >$BUILD_LOG 2>&1"
+ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; ./node_modules/bower/bin/bower install >>$BUILD_LOG 2>&1"
+ssh $BUILD_USER@$BUILD_SERVER "cd $BUILD_PATH; ./node_modules/ember-cli/bin/ember build --environment production >>$BUILD_LOG 2>&1"
 
 # Retrieve build
 if [ -d dist ]; then
